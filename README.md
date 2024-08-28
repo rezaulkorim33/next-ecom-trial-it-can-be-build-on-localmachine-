@@ -4,7 +4,13 @@ I kindly ask you to review the explanation video I shared. In the video, I demon
 
 Please note that there are three things not shown in the video:
 
+1st-
 I updated an outdated npm dependency called "caniuse-lite."
+
+2nd-
 In app/components/ProductForm.tsx, the useEffect hook was missing a dependency, "initialValue," which I added later.
+
+3rd-
 In app/verify/page.tsx, the useEffect hook was missing three dependencies: "router," "token," and "userId," which I added afterward.
+
 These issues were flagged as warnings during the local build process. After updating the code, I restarted the build process from the beginning.
