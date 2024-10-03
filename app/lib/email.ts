@@ -54,7 +54,7 @@ const sendEmailVerificationLink = async (profile: profile, linkUrl: string) => {
       user_name: profile.name,
       link: linkUrl,
       btn_title: "Click Me to Verify Email",
-      company_name: "Next Ecom",
+      company_name: "Goponjinish.com",
     },
   });
 };
@@ -83,7 +83,7 @@ const sendForgetPasswordLink = async (profile: profile, linkUrl: string) => {
       user_name: profile.name,
       link: linkUrl,
       btn_title: "Reset Password",
-      company_name: "Next Ecom",
+      company_name: "Goponjinish.com",
     },
   });
 };
@@ -112,7 +112,7 @@ const sendUpdatePasswordConfirmation = async (profile: profile) => {
       user_name: profile.name,
       link: process.env.SIGN_IN_URL!,
       btn_title: "Sign in",
-      company_name: "Next Ecom",
+      company_name: "Goponjinish.com",
     },
   });
 };
