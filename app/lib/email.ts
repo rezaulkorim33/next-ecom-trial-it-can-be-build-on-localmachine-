@@ -1,7 +1,7 @@
 import { MailtrapClient } from "mailtrap";
 import nodemailer from "nodemailer";
 
-type profile = { name: string; email: string };
+type profile = { name: string; address: string };
 
 const TOKEN = process.env.MAILTRAP_TOKEN!;
 const ENDPOINT = process.env.MAILTRAP_ENDPOINT!;
@@ -9,7 +9,7 @@ const ENDPOINT = process.env.MAILTRAP_ENDPOINT!;
 const client = new MailtrapClient({ endpoint: ENDPOINT, token: TOKEN });
 
 const sender = {
-  email: "hello@guponjinish.com",
+  address: "hello@guponjinish.com",
   name: "Goponjinish email Verification",
 };
 
@@ -35,13 +35,13 @@ const sendemailVerificationLink = async (profile: profile, linkUrl: string) => {
   // const transport = generatemailTransporter();
   // await transport.sendMail({
   //   from: "verification@nextecom.com",
-  //   to: profile.email,
+  //   to: profile.address,
   //   html: `<h1>Please verify your email by clicking on <a href="${linkUrl}">this link</a> </h1>`,
   // });
 
   const recipients = [
     {
-      email: profile.email,
+      address: profile.address,
     },
   ];
 
@@ -64,13 +64,13 @@ const sendForgetPasswordLink = async (profile: profile, linkUrl: string) => {
 
   // await transport.sendMail({
   //   from: "verification@nextecom.com",
-  //   to: profile.email,
+  //   to: profile.address,
   //   html: `<h1>Click on <a href="${linkUrl}">this link</a> to reset your password.</h1>`,
   // });
 
   const recipients = [
     {
-      email: profile.email,
+      address: profile.address,
     },
   ];
 
@@ -99,7 +99,7 @@ const sendUpdatePasswordConfirmation = async (profile: profile) => {
 
   const recipients = [
     {
-      email: profile.email,
+      address: profile.address,
     },
   ];
 
