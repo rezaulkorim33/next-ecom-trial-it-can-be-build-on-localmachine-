@@ -1,7 +1,7 @@
 import { MailtrapClient } from "mailtrap";
 import nodemailer from "nodemailer";
 
-type profile = { name: string; address: string };
+type profile = { name: string; email: string };
 
 const TOKEN = process.env.MAILTRAP_TOKEN!;
 const ENDPOINT = process.env.MAILTRAP_ENDPOINT!;
@@ -9,17 +9,17 @@ const ENDPOINT = process.env.MAILTRAP_ENDPOINT!;
 const client = new MailtrapClient({ endpoint: ENDPOINT, token: TOKEN });
 
 const sender = {
-  address: "hello@guponjinish.com",
-  name: "Goponjinish email Verification",
+  email: "nextecom@reactnativehive.com",
+  name: "Next Ecom Verification",
 };
 
-interface emailOptions {
+interface EmailOptions {
   profile: profile;
   subject: "verification" | "forget-password" | "password-changed";
   linkUrl?: string;
 }
 
-const generatemailTransporter = () => {
+const generateMailTransporter = () => {
   const transport = nodemailer.createTransport({
     host: "sandbox.smtp.mailtrap.io",
     port: 2525,
@@ -31,65 +31,65 @@ const generatemailTransporter = () => {
   return transport;
 };
 
-const sendemailVerificationLink = async (profile: profile, linkUrl: string) => {
-  // const transport = generatemailTransporter();
+const sendEmailVerificationLink = async (profile: profile, linkUrl: string) => {
+  // const transport = generateMailTransporter();
   // await transport.sendMail({
   //   from: "verification@nextecom.com",
-  //   to: profile.address,
+  //   to: profile.email,
   //   html: `<h1>Please verify your email by clicking on <a href="${linkUrl}">this link</a> </h1>`,
   // });
 
   const recipients = [
     {
-      address: profile.address,
+      email: profile.email,
     },
   ];
 
   await client.send({
     from: sender,
     to: recipients,
-    template_uuid: "16482851-3fe3-44f6-b1c4-87c8e95fe73d",
+    template_uuid: "eba72c1b-18b1-465d-af1a-913fad2fd2f6",
     template_variables: {
-      subject: "Verify Your email",
+      subject: "Verify Your Email",
       user_name: profile.name,
       link: linkUrl,
-      btn_title: "Click Me to Verify email",
-      company_name: "Goponjinish.com",
+      btn_title: "Click Me to Verify Email",
+      company_name: "Next Ecom",
     },
   });
 };
 
 const sendForgetPasswordLink = async (profile: profile, linkUrl: string) => {
-  // const transport = generatemailTransporter();
+  // const transport = generateMailTransporter();
 
   // await transport.sendMail({
   //   from: "verification@nextecom.com",
-  //   to: profile.address,
+  //   to: profile.email,
   //   html: `<h1>Click on <a href="${linkUrl}">this link</a> to reset your password.</h1>`,
   // });
 
   const recipients = [
     {
-      address: profile.address,
+      email: profile.email,
     },
   ];
 
   await client.send({
     from: sender,
     to: recipients,
-    template_uuid: "16482851-3fe3-44f6-b1c4-87c8e95fe73d",
+    template_uuid: "eba72c1b-18b1-465d-af1a-913fad2fd2f6",
     template_variables: {
       subject: "Forget Password Link",
       user_name: profile.name,
       link: linkUrl,
       btn_title: "Reset Password",
-      company_name: "Goponjinish.com",
+      company_name: "Next Ecom",
     },
   });
 };
 
 const sendUpdatePasswordConfirmation = async (profile: profile) => {
-  // const transport = generatemailTransporter();
+  // const transport = generateMailTransporter();
 
   // await transport.sendMail({
   //   from: "verification@nextecom.com",
@@ -99,30 +99,30 @@ const sendUpdatePasswordConfirmation = async (profile: profile) => {
 
   const recipients = [
     {
-      address: profile.address,
+      email: profile.email,
     },
   ];
 
   await client.send({
     from: sender,
     to: recipients,
-    template_uuid: "16482851-3fe3-44f6-b1c4-87c8e95fe73d",
+    template_uuid: "eba72c1b-18b1-465d-af1a-913fad2fd2f6",
     template_variables: {
       subject: "Password Reset Successful",
       user_name: profile.name,
       link: process.env.SIGN_IN_URL!,
       btn_title: "Sign in",
-      company_name: "Goponjinish.com",
+      company_name: "Next Ecom",
     },
   });
 };
 
-export const sendemail = (options: emailOptions) => {
+export const sendEmail = (options: EmailOptions) => {
   const { profile, subject, linkUrl } = options;
 
   switch (subject) {
     case "verification":
-      return sendemailVerificationLink(profile, linkUrl!);
+      return sendEmailVerificationLink(profile, linkUrl!);
     case "forget-password":
       return sendForgetPasswordLink(profile, linkUrl!);
     case "password-changed":
