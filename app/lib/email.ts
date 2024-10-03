@@ -9,8 +9,8 @@ const ENDPOINT = process.env.MAILTRAP_ENDPOINT!;
 const client = new MailtrapClient({ endpoint: ENDPOINT, token: TOKEN });
 
 const sender = {
-  email: "nextecom@reactnativehive.com",
-  name: "Next Ecom Verification",
+  email: "hello@guponjinish.com",
+  name: "Goponjinish Email Verification",
 };
 
 interface EmailOptions {
