@@ -1,7 +1,7 @@
 import { MailtrapClient } from "mailtrap";
-import nodaddresser from "nodaddresser";
+import nodemailer from "nodemailer";
 
-type profile = { name: string; address: string };
+type profile = { name: string; email: string };
 
 const TOKEN = process.env.MAILTRAP_TOKEN!;
 const ENDPOINT = process.env.MAILTRAP_ENDPOINT!;
@@ -9,18 +9,18 @@ const ENDPOINT = process.env.MAILTRAP_ENDPOINT!;
 const client = new MailtrapClient({ endpoint: ENDPOINT, token: TOKEN });
 
 const sender = {
-  address: "hello@guponjinish.com",
-  name: "Goponjinish address Verification",
+  email: "hello@guponjinish.com",
+  name: "Goponjinish email Verification",
 };
 
-interface addressOptions {
+interface emailOptions {
   profile: profile;
   subject: "verification" | "forget-password" | "password-changed";
   linkUrl?: string;
 }
 
-const generataddressTransporter = () => {
-  const transport = nodaddresser.createTransport({
+const generatemailTransporter = () => {
+  const transport = nodemailer.createTransport({
     host: "sandbox.smtp.mailtrap.io",
     port: 2525,
     auth: {
@@ -31,17 +31,17 @@ const generataddressTransporter = () => {
   return transport;
 };
 
-const sendaddressVerificationLink = async (profile: profile, linkUrl: string) => {
-  // const transport = generataddressTransporter();
+const sendemailVerificationLink = async (profile: profile, linkUrl: string) => {
+  // const transport = generatemailTransporter();
   // await transport.sendMail({
   //   from: "verification@nextecom.com",
-  //   to: profile.address,
-  //   html: `<h1>Please verify your address by clicking on <a href="${linkUrl}">this link</a> </h1>`,
+  //   to: profile.email,
+  //   html: `<h1>Please verify your email by clicking on <a href="${linkUrl}">this link</a> </h1>`,
   // });
 
   const recipients = [
     {
-      address: profile.address,
+      email: profile.email,
     },
   ];
 
@@ -50,27 +50,27 @@ const sendaddressVerificationLink = async (profile: profile, linkUrl: string) =>
     to: recipients,
     template_uuid: "16482851-3fe3-44f6-b1c4-87c8e95fe73d",
     template_variables: {
-      subject: "Verify Your address",
+      subject: "Verify Your email",
       user_name: profile.name,
       link: linkUrl,
-      btn_title: "Click Me to Verify address",
+      btn_title: "Click Me to Verify email",
       company_name: "Goponjinish.com",
     },
   });
 };
 
 const sendForgetPasswordLink = async (profile: profile, linkUrl: string) => {
-  // const transport = generataddressTransporter();
+  // const transport = generatemailTransporter();
 
   // await transport.sendMail({
   //   from: "verification@nextecom.com",
-  //   to: profile.address,
+  //   to: profile.email,
   //   html: `<h1>Click on <a href="${linkUrl}">this link</a> to reset your password.</h1>`,
   // });
 
   const recipients = [
     {
-      address: profile.address,
+      email: profile.email,
     },
   ];
 
@@ -89,17 +89,17 @@ const sendForgetPasswordLink = async (profile: profile, linkUrl: string) => {
 };
 
 const sendUpdatePasswordConfirmation = async (profile: profile) => {
-  // const transport = generataddressTransporter();
+  // const transport = generatemailTransporter();
 
   // await transport.sendMail({
   //   from: "verification@nextecom.com",
-  //   to: profile.address,
+  //   to: profile.email,
   //   html: `<h1>We changed your password <a href="${process.env.SIGN_IN_URL}">click here</a> to sign in.</h1>`,
   // });
 
   const recipients = [
     {
-      address: profile.address,
+      email: profile.email,
     },
   ];
 
@@ -117,12 +117,12 @@ const sendUpdatePasswordConfirmation = async (profile: profile) => {
   });
 };
 
-export const sendaddress = (options: addressOptions) => {
+export const sendemail = (options: emailOptions) => {
   const { profile, subject, linkUrl } = options;
 
   switch (subject) {
     case "verification":
-      return sendaddressVerificationLink(profile, linkUrl!);
+      return sendemailVerificationLink(profile, linkUrl!);
     case "forget-password":
       return sendForgetPasswordLink(profile, linkUrl!);
     case "password-changed":
