@@ -24,8 +24,8 @@ const generateMailTransporter = () => {
     host: "live.smtp.mailtrap.io",
     port: 587,
     auth: {
-      user: "api",
-      pass: "d07cb0e3bd92b5f6d46ca86c064dfbe7",
+      user: "659800aca290fc",
+      pass: "ddff5bc38ad830",
     },
   });
   return transport;
