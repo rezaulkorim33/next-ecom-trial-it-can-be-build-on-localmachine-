@@ -3,10 +3,12 @@ import nodemailer from "nodemailer";
 
 type profile = { name: string; email: string };
 
-const TOKEN = process.env.MAILTRAP_TOKEN!;
-const ENDPOINT = process.env.MAILTRAP_ENDPOINT!;
+// Removed TOKEN and ENDPOINT constants
 
-const client = new MailtrapClient({ endpoint: ENDPOINT, token: TOKEN });
+const client = new MailtrapClient({
+  endpoint: "https://api.mailtrap.io/v1", // Ensure the endpoint is correctly specified
+  token: "d07cb0e3bd92b5f6d46ca86c064dfbe7", // Keep your Mailtrap API token hardcoded for testing
+});
 
 const sender = {
   email: "hello@guponjinish.com",
@@ -25,96 +27,85 @@ const generateMailTransporter = () => {
     port: 2525,
     auth: {
       user: "api",
-      pass: "d07cb0e3bd92b5f6d46ca86c064dfbe7",
+      pass: "d07cb0e3bd92b5f6d46ca86c064dfbe7", // Keep your Mailtrap SMTP credentials
     },
   });
   return transport;
 };
 
 const sendEmailVerificationLink = async (profile: profile, linkUrl: string) => {
-  // const transport = generateMailTransporter();
-  // await transport.sendMail({
-  //   from: "verification@nextecom.com",
-  //   to: profile.email,
-  //   html: `<h1>Please verify your email by clicking on <a href="${linkUrl}">this link</a> </h1>`,
-  // });
-
   const recipients = [
     {
       email: profile.email,
     },
   ];
 
-  await client.send({
-    from: sender,
-    to: recipients,
-    template_uuid: "16482851-3fe3-44f6-b1c4-87c8e95fe73d",
-    template_variables: {
-      subject: "Verify Your Email",
-      user_name: profile.name,
-      link: linkUrl,
-      btn_title: "Click Me to Verify Email",
-      company_name: "Next Ecom",
-    },
-  });
+  try {
+    await client.send({
+      from: sender,
+      to: recipients,
+      template_uuid: "16482851-3fe3-44f6-b1c4-87c8e95fe73d",
+      template_variables: {
+        subject: "Verify Your Email",
+        user_name: profile.name,
+        link: linkUrl,
+        btn_title: "Click Me to Verify Email",
+        company_name: "Next Ecom",
+      },
+    });
+  } catch (error) {
+    console.error("Error sending verification email:", error);
+  }
 };
 
 const sendForgetPasswordLink = async (profile: profile, linkUrl: string) => {
-  // const transport = generateMailTransporter();
-
-  // await transport.sendMail({
-  //   from: "verification@nextecom.com",
-  //   to: profile.email,
-  //   html: `<h1>Click on <a href="${linkUrl}">this link</a> to reset your password.</h1>`,
-  // });
-
   const recipients = [
     {
       email: profile.email,
     },
   ];
 
-  await client.send({
-    from: sender,
-    to: recipients,
-    template_uuid: "16482851-3fe3-44f6-b1c4-87c8e95fe73d",
-    template_variables: {
-      subject: "Forget Password Link",
-      user_name: profile.name,
-      link: linkUrl,
-      btn_title: "Reset Password",
-      company_name: "Next Ecom",
-    },
-  });
+  try {
+    await client.send({
+      from: sender,
+      to: recipients,
+      template_uuid: "16482851-3fe3-44f6-b1c4-87c8e95fe73d",
+      template_variables: {
+        subject: "Forget Password Link",
+        user_name: profile.name,
+        link: linkUrl,
+        btn_title: "Reset Password",
+        company_name: "Next Ecom",
+      },
+    });
+  } catch (error) {
+    console.error("Error sending forget password email:", error);
+  }
 };
 
 const sendUpdatePasswordConfirmation = async (profile: profile) => {
-  // const transport = generateMailTransporter();
-
-  // await transport.sendMail({
-  //   from: "verification@nextecom.com",
-  //   to: profile.email,
-  //   html: `<h1>We changed your password <a href="${process.env.SIGN_IN_URL}">click here</a> to sign in.</h1>`,
-  // });
-
   const recipients = [
     {
       email: profile.email,
     },
   ];
 
-  await client.send({
-    from: sender,
-    to: recipients,
-    template_uuid: "16482851-3fe3-44f6-b1c4-87c8e95fe73d",
-    template_variables: {
-      subject: "Password Reset Successful",
-      user_name: profile.name,
-      link: process.env.SIGN_IN_URL!,
-      btn_title: "Sign in",
-      company_name: "Next Ecom",
-    },
-  });
+  try {
+    await client.send({
+      from: sender,
+      to: recipients,
+      template_uuid: "16482851-3fe3-44f6-b1c4-87c8e95fe73d",
+      template_variables: {
+        subject: "Password Reset Successful",
+        user_name: profile.name,
+        link: process.env.SIGN_IN_URL!, // Assuming this is set in your environment
+        btn_title: "Sign in",
+        company_name: "Next Ecom",
+      },
+    });
+  } catch (error) {
+    console.error("Error sending password change confirmation email:", error);
+  }
 };
 
 export const sendEmail = (options: EmailOptions) => {
