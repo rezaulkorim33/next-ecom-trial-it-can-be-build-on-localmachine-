@@ -21,8 +21,8 @@ interface EmailOptions {
 
 const generateMailTransporter = () => {
   const transport = nodemailer.createTransport({
-    host: "live.smtp.mailtrap.io",
-    port: 587,
+    host: "sandbox.smtp.mailtrap.io",
+    port: 2525,
     auth: {
       user: "659800aca290fc",
       pass: "ddff5bc38ad830",
