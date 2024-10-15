@@ -24,8 +24,8 @@ const generateMailTransporter = () => {
     host: "sandbox.smtp.mailtrap.io",
     port: 2525,
     auth: {
-      user: "659800aca290fc",
-      pass: "ddff5bc38ad830",
+      user: "bcab674080b230",
+      pass: "7fc09eafd1ea51",
     },
   });
   return transport;
@@ -36,7 +36,7 @@ const sendEmailVerificationLink = async (profile: profile, linkUrl: string) => {
   // await transport.sendMail({
   //   from: "verification@nextecom.com",
   //   to: profile.email,
-  //   html: <h1>Please verify your email by clicking on <a href="${linkUrl}">this link</a> </h1>,
+  //   html: `<h1>Please verify your email by clicking on <a href="${linkUrl}">this link</a> </h1>`,
   // });
 
   const recipients = [
@@ -65,7 +65,7 @@ const sendForgetPasswordLink = async (profile: profile, linkUrl: string) => {
   // await transport.sendMail({
   //   from: "verification@nextecom.com",
   //   to: profile.email,
-  //   html: <h1>Click on <a href="${linkUrl}">this link</a> to reset your password.</h1>,
+  //   html: `<h1>Click on <a href="${linkUrl}">this link</a> to reset your password.</h1>`,
   // });
 
   const recipients = [
@@ -94,7 +94,7 @@ const sendUpdatePasswordConfirmation = async (profile: profile) => {
   // await transport.sendMail({
   //   from: "verification@nextecom.com",
   //   to: profile.email,
-  //   html: <h1>We changed your password <a href="${process.env.SIGN_IN_URL}">click here</a> to sign in.</h1>,
+  //   html: `<h1>We changed your password <a href="${process.env.SIGN_IN_URL}">click here</a> to sign in.</h1>`,
   // });
 
   const recipients = [
