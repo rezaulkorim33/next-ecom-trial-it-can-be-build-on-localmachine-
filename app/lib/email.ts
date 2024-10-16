@@ -1,7 +1,7 @@
 import { MailtrapClient } from "mailtrap";
 import nodemailer from "nodemailer";
 
-type profile = { name: string; email: string };
+type Profile = { name: string; email: string };
 
 const TOKEN = process.env.MAILTRAP_TOKEN!;
 const ENDPOINT = process.env.MAILTRAP_ENDPOINT!;
@@ -9,36 +9,17 @@ const ENDPOINT = process.env.MAILTRAP_ENDPOINT!;
 const client = new MailtrapClient({ endpoint: ENDPOINT, token: TOKEN });
 
 const sender = {
-  email: "hello@guponjinish.com",
-  name: "Mailtrap Test",
+  email: "no-reply@guponjinish.com", // Use your production email here
+  name: "User Sign In", // Adjust as necessary
 };
 
 interface EmailOptions {
-  profile: profile;
+  profile: Profile;
   subject: "verification" | "forget-password" | "password-changed";
   linkUrl?: string;
 }
 
-const generateMailTransporter = () => {
-  const transport = nodemailer.createTransport({
-    host: "sandbox.smtp.mailtrap.io",
-    port: 2525,
-    auth: {
-      user: "bcab674080b230",
-      pass: "7fc09eafd1ea51",
-    },
-  });
-  return transport;
-};
-
-const sendEmailVerificationLink = async (profile: profile, linkUrl: string) => {
-  // const transport = generateMailTransporter();
-  // await transport.sendMail({
-  //   from: "verification@nextecom.com",
-  //   to: profile.email,
-  //   html: `<h1>Please verify your email by clicking on <a href="${linkUrl}">this link</a> </h1>`,
-  // });
-
+const sendEmailVerificationLink = async (profile: Profile, linkUrl: string) => {
   const recipients = [
     {
       email: profile.email,
@@ -48,26 +29,35 @@ const sendEmailVerificationLink = async (profile: profile, linkUrl: string) => {
   await client.send({
     from: sender,
     to: recipients,
-    template_uuid: "16482851-3fe3-44f6-b1c4-87c8e95fe73d",
+    template_uuid: "16482851-3fe3-44f6-b1c4-87c8e95fe73d", // UUID for verification email
     template_variables: {
-      subject: "Verify Your Email",
+      user_name: profile.name,
+      sign_in_link: linkUrl, // Pass the link URL to the template
+    },
+  });
+};
+
+const sendForgetPasswordLink = async (profile: Profile, linkUrl: string) => {
+  const recipients = [
+    {
+      email: profile.email,
+    },
+  ];
+
+  await client.send({
+    from: sender,
+    to: recipients,
+    template_uuid: "16482851-3fe3-44f6-b1c4-87c8e95fe73d", // UUID for forget password email (you can create a specific template for this)
+    template_variables: {
       user_name: profile.name,
       link: linkUrl,
-      btn_title: "Click Me to Verify Email",
-      company_name: "Next Ecom",
+      btn_title: "Reset Password", // Add button title if necessary
+      company_name: "Next Ecom", // Adjust as necessary
     },
   });
 };
 
-const sendForgetPasswordLink = async (profile: profile, linkUrl: string) => {
-  // const transport = generateMailTransporter();
-
-  // await transport.sendMail({
-  //   from: "verification@nextecom.com",
-  //   to: profile.email,
-  //   html: `<h1>Click on <a href="${linkUrl}">this link</a> to reset your password.</h1>`,
-  // });
-
+const sendUpdatePasswordConfirmation = async (profile: Profile) => {
   const recipients = [
     {
       email: profile.email,
@@ -77,42 +67,12 @@ const sendForgetPasswordLink = async (profile: profile, linkUrl: string) => {
   await client.send({
     from: sender,
     to: recipients,
-    template_uuid: "16482851-3fe3-44f6-b1c4-87c8e95fe73d",
+    template_uuid: "16482851-3fe3-44f6-b1c4-87c8e95fe73d", // UUID for password update confirmation email
     template_variables: {
-      subject: "Forget Password Link",
       user_name: profile.name,
-      link: linkUrl,
-      btn_title: "Reset Password",
-      company_name: "Next Ecom",
-    },
-  });
-};
-
-const sendUpdatePasswordConfirmation = async (profile: profile) => {
-  // const transport = generateMailTransporter();
-
-  // await transport.sendMail({
-  //   from: "verification@nextecom.com",
-  //   to: profile.email,
-  //   html: `<h1>We changed your password <a href="${process.env.SIGN_IN_URL}">click here</a> to sign in.</h1>`,
-  // });
-
-  const recipients = [
-    {
-      email: profile.email,
-    },
-  ];
-
-  await client.send({
-    from: sender,
-    to: recipients,
-    template_uuid: "16482851-3fe3-44f6-b1c4-87c8e95fe73d",
-    template_variables: {
-      subject: "Password Reset Successful",
-      user_name: profile.name,
-      link: process.env.SIGN_IN_URL!,
+      link: process.env.SIGN_IN_URL!, // Ensure SIGN_IN_URL is defined in your environment variables
       btn_title: "Sign in",
-      company_name: "Next Ecom",
+      company_name: "Next Ecom", // Adjust as necessary
     },
   });
 };
