@@ -1,5 +1,4 @@
 import { MailtrapClient } from "mailtrap";
-import nodemailer from "nodemailer";
 
 type Profile = { name: string; email: string };
 
@@ -13,26 +12,26 @@ const sender = {
   name: "User Sign In", // Adjust as necessary
 };
 
-interface EmailOptions {
-  profile: Profile;
-  subject: "verification" | "forget-password" | "password-changed";
-  linkUrl?: string;
+interface VerificationMailOptions {
+  link: string;
+  to: string;
+  name: string;
 }
 
-const sendEmailVerificationLink = async (profile: Profile, linkUrl: string) => {
+const sendVerificationMailProd = async (options: VerificationMailOptions) => {
   const recipients = [
     {
-      email: profile.email,
+      email: options.to,
     },
   ];
 
   await client.send({
     from: sender,
     to: recipients,
-    template_uuid: "16482851-3fe3-44f6-b1c4-87c8e95fe73d", // UUID for verification email
+    template_uuid: "16482851-3fe3-44f6-b1c4-87c8e95fe73d", // Your specific UUID
     template_variables: {
-      user_name: profile.name,
-      sign_in_link: linkUrl, // Pass the link URL to the template
+      user_name: options.name,
+      sign_in_link: options.link,
     },
   });
 };
@@ -47,7 +46,7 @@ const sendForgetPasswordLink = async (profile: Profile, linkUrl: string) => {
   await client.send({
     from: sender,
     to: recipients,
-    template_uuid: "16482851-3fe3-44f6-b1c4-87c8e95fe73d", // UUID for forget password email (you can create a specific template for this)
+    template_uuid: "16482851-3fe3-44f6-b1c4-87c8e95fe73d", // You can create a specific template for this
     template_variables: {
       user_name: profile.name,
       link: linkUrl,
@@ -77,12 +76,22 @@ const sendUpdatePasswordConfirmation = async (profile: Profile) => {
   });
 };
 
+interface EmailOptions {
+  profile: Profile;
+  subject: "verification" | "forget-password" | "password-changed";
+  linkUrl?: string;
+}
+
 export const sendEmail = (options: EmailOptions) => {
   const { profile, subject, linkUrl } = options;
 
   switch (subject) {
     case "verification":
-      return sendEmailVerificationLink(profile, linkUrl!);
+      return sendVerificationMailProd({
+        link: linkUrl!, // Ensure linkUrl is provided
+        to: profile.email, // Use profile.email here
+        name: profile.name, // Use profile.name here
+      });
     case "forget-password":
       return sendForgetPasswordLink(profile, linkUrl!);
     case "password-changed":
