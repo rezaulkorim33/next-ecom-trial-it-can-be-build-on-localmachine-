@@ -3,31 +3,13 @@ import nodemailer from "nodemailer";
 
 type profile = { name: string; email: string };
 
-// New types for mail options
-type VerificationMailOptions = {
-  to: string;
-  name: string;
-  link: string;
-};
-
-type ForgetPasswordMailOptions = {
-  to: string;
-  name: string;
-  link: string;
-};
-
-type UpdatePasswordMailOptions = {
-  to: string;
-  name: string;
-};
-
 const TOKEN = process.env.MAILTRAP_TOKEN!;
 const ENDPOINT = process.env.MAILTRAP_ENDPOINT!;
 
 const client = new MailtrapClient({ endpoint: ENDPOINT, token: TOKEN });
 
 const sender = {
-  email: "hello@guponjinish.com", // Keep this unchanged
+  email: "hello@guponjinish.com",
   name: "Mailtrap Test",
 };
 
@@ -37,30 +19,29 @@ interface EmailOptions {
   linkUrl?: string;
 }
 
-// New function to send verification mail
-const sendVerificationMailProd = async (options: VerificationMailOptions) => {
-  const recipients = [
-    {
-      email: options.to,
-    },
-  ];
-
-  await client.send({
-    from: sender,
-    to: recipients,
-    template_uuid: "e1e23630-8364-4fdb-814f-32eea50e192f",
-    template_variables: {
-      user_name: options.name,
-      sign_in_link: options.link,
+const generateMailTransporter = () => {
+  const transport = nodemailer.createTransport({
+    host: "sandbox.smtp.mailtrap.io",
+    port: 2525,
+    auth: {
+      user: "bcab674080b230",
+      pass: "7fc09eafd1ea51",
     },
   });
+  return transport;
 };
 
-// New function to send forget password mail
-const sendForgetPasswordMailProd = async (options: ForgetPasswordMailOptions) => {
+const sendEmailVerificationLink = async (profile: profile, linkUrl: string) => {
+  // const transport = generateMailTransporter();
+  // await transport.sendMail({
+  //   from: "verification@nextecom.com",
+  //   to: profile.email,
+  //   html: `<h1>Please verify your email by clicking on <a href="${linkUrl}">this link</a> </h1>`,
+  // });
+
   const recipients = [
     {
-      email: options.to,
+      email: profile.email,
     },
   ];
 
@@ -69,19 +50,56 @@ const sendForgetPasswordMailProd = async (options: ForgetPasswordMailOptions) =>
     to: recipients,
     template_uuid: "16482851-3fe3-44f6-b1c4-87c8e95fe73d",
     template_variables: {
-      user_name: options.name,
-      link: options.link,
+      subject: "Verify Your Email",
+      user_name: profile.name,
+      link: linkUrl,
+      btn_title: "Click Me to Verify Email",
+      company_name: "Next Ecom",
+    },
+  });
+};
+
+const sendForgetPasswordLink = async (profile: profile, linkUrl: string) => {
+  // const transport = generateMailTransporter();
+
+  // await transport.sendMail({
+  //   from: "verification@nextecom.com",
+  //   to: profile.email,
+  //   html: `<h1>Click on <a href="${linkUrl}">this link</a> to reset your password.</h1>`,
+  // });
+
+  const recipients = [
+    {
+      email: profile.email,
+    },
+  ];
+
+  await client.send({
+    from: sender,
+    to: recipients,
+    template_uuid: "16482851-3fe3-44f6-b1c4-87c8e95fe73d",
+    template_variables: {
+      subject: "Forget Password Link",
+      user_name: profile.name,
+      link: linkUrl,
       btn_title: "Reset Password",
       company_name: "Next Ecom",
     },
   });
 };
 
-// New function to send password update confirmation mail
-const sendUpdatePasswordMailProd = async (options: UpdatePasswordMailOptions) => {
+const sendUpdatePasswordConfirmation = async (profile: profile) => {
+  // const transport = generateMailTransporter();
+
+  // await transport.sendMail({
+  //   from: "verification@nextecom.com",
+  //   to: profile.email,
+  //   html: `<h1>We changed your password <a href="${process.env.SIGN_IN_URL}">click here</a> to sign in.</h1>`,
+  // });
+
   const recipients = [
     {
-      email: options.to,
+      email: profile.email,
     },
   ];
 
@@ -90,7 +108,8 @@ const sendUpdatePasswordMailProd = async (options: UpdatePasswordMailOptions) =>
     to: recipients,
     template_uuid: "16482851-3fe3-44f6-b1c4-87c8e95fe73d",
     template_variables: {
-      user_name: options.name,
+      subject: "Password Reset Successful",
+      user_name: profile.name,
       link: process.env.SIGN_IN_URL!,
       btn_title: "Sign in",
       company_name: "Next Ecom",
@@ -103,21 +122,10 @@ export const sendEmail = (options: EmailOptions) => {
 
   switch (subject) {
     case "verification":
-      return sendVerificationMailProd({
-        to: profile.email,
-        name: profile.name,
-        link: linkUrl!, // Assuming linkUrl is provided
-      });
+      return sendEmailVerificationLink(profile, linkUrl!);
     case "forget-password":
-      return sendForgetPasswordMailProd({
-        to: profile.email,
-        name: profile.name,
-        link: linkUrl!, // Assuming linkUrl is provided
-      });
+      return sendForgetPasswordLink(profile, linkUrl!);
     case "password-changed":
-      return sendUpdatePasswordMailProd({
-        to: profile.email,
-        name: profile.name,
-      });
+      return sendUpdatePasswordConfirmation(profile);
   }
 };
