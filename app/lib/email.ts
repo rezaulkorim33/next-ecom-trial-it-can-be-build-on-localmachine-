@@ -9,8 +9,8 @@ const ENDPOINT = process.env.MAILTRAP_ENDPOINT!;
 const client = new MailtrapClient({ endpoint: ENDPOINT, token: TOKEN });
 
 const sender = {
-  email: "no-reply@guponjinish.com", // Use your production email here
-  name: "User Sign In", // Adjust as necessary
+  email: "hello@guponjinish.com", // Use your production email here
+  name: "Mailtrap Test", // Adjust as necessary
 };
 
 interface EmailOptions {
