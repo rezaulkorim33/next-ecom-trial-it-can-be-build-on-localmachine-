@@ -24,8 +24,8 @@ const generateMailTransporter = () => {
     host: "sandbox.smtp.mailtrap.io",
     port: 2525,
     auth: {
-      user: "bcab674080b230",
-      pass: "7fc09eafd1ea51",
+      user: "659800aca290fc",
+      pass: "ddff5bc38ad830",
     },
   });
   return transport;
